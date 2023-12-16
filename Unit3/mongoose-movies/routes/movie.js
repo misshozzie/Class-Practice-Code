@@ -10,24 +10,14 @@ router.get('/show', movieController.getMovie);
 // highlight-next-line
 router.get("/show/:title", movieController.getTitle);
 
-// get all the done todos or havent done todos
-// router.get("/data/:done", toDoController.getID);
+// GET /show/nowshowing
+// get all the movies that are now showing
+router.get("/show/nowShowing", movieController.getNowShowing);
 
 
 
 // POST /create
 // highlight-next-line
 router.post("/create", movieController.createMovie); // add this route
-
-// router.delete("/data/:id", toDoController.deleteTodo);
-
-
-/* GET todos users */ 
-// router.get('/users', toDoController.user);
-
-
-// router.get('/data/unique', toDoController.unique);
-// router.get('/data/location', toDoController.index);
-
 
 module.exports = router;

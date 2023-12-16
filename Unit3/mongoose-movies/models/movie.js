@@ -3,7 +3,8 @@ const daoMovies = require("../daos/movie")
 module.exports = {
     getAll,
     createMovie,
-    getOne
+    getOne,
+    getNowShowing,
   };
 
   async function getAll(query) {
@@ -32,7 +33,9 @@ module.exports = {
   }
   
   function createMovie(movie) {
-    //
+    //check if the movie already exist
+    // if doesn't, then create
+    //daoMovies.find(movie) --> if not found, create
     return daoMovies.create(movie);
   }
 
@@ -44,3 +47,9 @@ module.exports = {
         return movie
     }
   }
+
+  async function getNowShowing() {
+    const movie = await daoMovies.findAll({nowShowing: true})
+    return movie
+    }
+  
