@@ -1,12 +1,12 @@
 const modelMovies = require("../models/movie");
+const Performer = require('../models/performer')
 
 // highlight-start
 module.exports = {
     index,
     show,
-    newMovie,
-    createMovie,
-    getNowShowing,
+    new: newMovie,
+    create: createMovie
 }
 
     function index(req, res) {
@@ -47,20 +47,5 @@ module.exports = {
         if (err) return res.redirect('/movies/new');
         console.log(movie);
         res.redirect(`/movies/${movie._id}`);
-      });
-    }
-
-    // async function getNowShowing(req, res) {
-    //   const modelData = await modelMovies.getNowShowing()
-    //   res.json(modelData);
-    // }
-    function getNowShowing(req, res) {
-      modelMovies.getNowShowing((error, modelData) => {
-        if (error) {
-          // Handle the error here, like sending a response with a 500 status code.
-          res.status(500).send(error.message);
-        } else {
-          res.json(modelData);
-        }
       });
     }

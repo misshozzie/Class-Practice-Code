@@ -1,55 +1,33 @@
-const daoMovies = require("../daos/movie")
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-module.exports = {
-    getAll,
-    createMovie,
-    getOne,
-    getNowShowing,
-  };
+var reviewSchema = new Schema({
+  content: String,
+  rating: {type: Number, min: 1, max: 5, default: 5}
+}, {
+  timestamps: true
+});
 
-  async function getAll(query) {
-    var findQuery = {}
-    var queryFields = ["title", "mpaaRating", "_id", "nowShowing", "releaseYear"]
-    for (field of queryFields) {
-        console.log(field)
-        if (query.hasOwnProperty(field)) {
-            findQuery[field] = query[field]
-        }
+var movieSchema = new Schema({
+  title: {
+    type: String,
+    required: true
+  },
+  releaseYear: {
+    type: Number,
+    default: function () {
+      return new Date().getFullYear();
     }
-    console.log(findQuery)
+  }, mpaaRating: String,
+  nowShowing: { type: Boolean, default: false },
+  reviews: [reviewSchema],
+  cast: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Performer'
+  }]
+  // studio: {type: Schema.Types.ObjectId, ref: 'Studio'}
+}, {
+  timestamps: true
+});
 
-    var casts = []
-    if (query.hasOwnProperty("cast")) {
-        casts = query["cast"].split(",")
-    }
-    console.log(casts)
-    var movies
-    if (casts.length > 0) {
-        movies = await daoMovies.find(findQuery).where("cast").in(casts)
-    } else {
-        movies = await daoMovies.find(findQuery)
-    }
-    return movies;
-  }
-  
-  function createMovie(movie) {
-    //check if the movie already exist
-    // if doesn't, then create
-    //daoMovies.find(movie) --> if not found, create
-    return daoMovies.create(movie);
-  }
-
-  async function getOne(param) {
-    const movie = await daoMovies.findOne({title: param})
-    if (movie == null || Object.keys(movie).length == 0) {
-        return "no movie with such title"
-    } else {
-        return movie
-    }
-  }
-
-  async function getNowShowing() {
-    const movie = await daoMovies.findAll({nowShowing: true})
-    return movie
-    }
-  
+module.exports = mongoose.model('Movie', movieSchema);

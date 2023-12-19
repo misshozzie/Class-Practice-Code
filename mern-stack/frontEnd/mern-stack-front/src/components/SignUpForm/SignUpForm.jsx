@@ -27,8 +27,9 @@ export default function SignUpForm() {
         return false
     }
 
-    async function handleSubmit() {
+    async function handleSubmit(evt) {
         try {
+            evt.preventDefault();
             // We don't want to send the 'error' or 'confirm' property,
             //  so let's make a copy of the state object, then delete them
             // highlight-start
