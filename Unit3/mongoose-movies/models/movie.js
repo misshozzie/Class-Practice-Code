@@ -1,33 +1,46 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const daoMovies = require("../daos/movie")
 
-var reviewSchema = new Schema({
-  content: String,
-  rating: {type: Number, min: 1, max: 5, default: 5}
-}, {
-  timestamps: true
-});
+module.exports = {
+    getAll,
+    createMovie,
+    getOne
+  };
 
-var movieSchema = new Schema({
-  title: {
-    type: String,
-    required: true
-  },
-  releaseYear: {
-    type: Number,
-    default: function () {
-      return new Date().getFullYear();
+  async function getAll(query) {
+    var findQuery = {}
+    var queryFields = ["title", "mpaaRating", "_id", "nowShowing", "releaseYear"]
+    for (field of queryFields) {
+        console.log(field)
+        if (query.hasOwnProperty(field)) {
+            findQuery[field] = query[field]
+        }
     }
-  }, mpaaRating: String,
-  nowShowing: { type: Boolean, default: false },
-  reviews: [reviewSchema],
-  cast: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Performer'
-  }]
-  // studio: {type: Schema.Types.ObjectId, ref: 'Studio'}
-}, {
-  timestamps: true
-});
+    console.log(findQuery)
 
-module.exports = mongoose.model('Movie', movieSchema);
+    var casts = []
+    if (query.hasOwnProperty("cast")) {
+        casts = query["cast"].split(",")
+    }
+    console.log(casts)
+    var movies
+    if (casts.length > 0) {
+        movies = await daoMovies.find(findQuery).where("cast").in(casts)
+    } else {
+        movies = await daoMovies.find(findQuery)
+    }
+    return movies;
+  }
+  
+  function createMovie(movie) {
+    //
+    return daoMovies.create(movie);
+  }
+
+  async function getOne(param) {
+    const movie = await daoMovies.findOne({title: param})
+    if (movie == null || Object.keys(movie).length == 0) {
+        return "no movie with such title"
+    } else {
+        return movie
+    }
+  }

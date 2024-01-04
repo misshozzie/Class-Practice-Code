@@ -1,16 +1,14 @@
+var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var moviesRouter = require('./routes/movies');
-var reviewsRouter = require('./routes/reviews');
-var performersRouter = require('./routes/performers');
+var movieRouter = require('./routes/movies')
+var usersRouter = require('./routes/users');
 
 require("dotenv").config();
-// connect to the database with AFTER the config vars are processed
-//changed by SQ for refactoring
 require("./client/mongo");
 
 var app = express();
@@ -26,9 +24,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/movies', moviesRouter);
-app.use('/', reviewsRouter);
-app.use('/', performersRouter);
+app.use('/users', usersRouter);
+app.use('/movie', movieRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

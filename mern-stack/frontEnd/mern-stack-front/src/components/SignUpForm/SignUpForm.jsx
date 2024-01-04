@@ -41,7 +41,7 @@ export default function SignUpForm() {
             const user = await signUp(formData);
             // Baby step!
             console.log(user)
-          
+            
           } catch(e) {
             console.log(e);
           }
